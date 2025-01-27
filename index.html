@@ -1,11 +1,56 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Swipe®</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-  </head>
-  <body>
-    <h1>Swipe</h1>
-    <p>this website will be upgraded when it will be tested</p>
-  </body>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swipe</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('https://example.com/space-background.jpg');
+            background-size: cover;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>*Swipe*</h1>
+        <p>Перейдите на интересующие вас сайты:</p>
+        <a href="https://StrongApps.github.io/swipe/webgl.cube.new.html" class="button">WebGL Cube (rotatable on PC and Phone)</a>
+        <a href="https://StrongApps.github.io/swipe/webgl.sphere.html" class="button">WebGL Sphere (rotatable on PC and Phone)</a>
+        <a href="#" class="button">Coming Soon...</a>
+    </div>
+
+</body>
 </html>
