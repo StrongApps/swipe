@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>3D WebGL Cube</title>
+<style>
+body { margin: 0; overflow: hidden; }
+canvas { display: block; }
+#file-input-container {
+  position: absolute;
+  top: 50px;
+  left: 10px;
+  z-index: 10;
+  font-family: sans-serif;
+}
+#slider-container {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  font-family: sans-serif;
+}
+label {
+color: white;
+}
+</style>
+</head>
+<body>
+
+<div id="file-input-container">
+  <input type="file" id="textureFile" accept=".jpg">
+</div>
+<div id="slider-container">
+  <label for="sensitivitySlider">Чувствительность:</label>
+  <input type="range" id="sensitivitySlider" min="0.001" max="0.02" step="0.001" value="0.005">
+
+  <label for="zoomSlider">Приближение:</label>
+  <input type="range" id="zoomSlider" min="1" max="10" step="0.1" value="5">
+
+  <label for="colorPicker">Цвет:</label>
+  <input type="color" id="colorPicker" value="#ffffff">
+
+<label><a href="webgl.cube.new.html">Turn to Cube</a></label>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+const geometry = new THREE.SphereGeometry();
+let material = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true }); // Initial material
+let cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
+
+camera.position.z = 5;
+
+let isDragging = false;
+let previousMousePosition = { x: 0, y: 0 };
+let sensitivity = 0.005;
+
+const sensitivitySlider = document.getElementById('sensitivitySlider');
+sensitivitySlider.addEventListener('input', () => { sensitivity = parseFloat(sensitivitySlider.value); });
+
+const zoomSlider = document.getElementById('zoomSlider');
+zoomSlider.addEventListener('input', () => {
+  camera.position.z = zoomSlider.value;
+});
+
+const colorPicker = document.getElementById('colorPicker');
+colorPicker.addEventListener('input', () => {
+  const color = colorPicker.value;
+  cube.material.color.set(color);
+});
+
+const handleMouseDown = (e) => {
+  isDragging = true;
+};
+
+const handleMouseUp = (e) => {
+  isDragging = false;
+};
+
+const handleMouseMove = (e) => {
+  if (isDragging) {
+    const deltaMove = { x: e.offsetX - previousMousePosition.x, y: e.offsetY - previousMousePosition.y };
+    cube.rotation.y += deltaMove.x * sensitivity;
+    cube.rotation.x += deltaMove.y * sensitivity;
+  }
+  previousMousePosition = { x: e.offsetX, y: e.offsetY };
+};
+
+renderer.domElement.addEventListener('mousedown', handleMouseDown);
+renderer.domElement.addEventListener('mouseup', handleMouseUp);
+renderer.domElement.addEventListener('mousemove', handleMouseMove);
+
+renderer.domElement.addEventListener('touchstart', (e) => {
+  isDragging = true;
+  previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+});
+
+renderer.domElement.addEventListener('touchend', handleMouseUp);
+
+renderer.domElement.addEventListener('touchmove', (e) => {
+  if (isDragging) {
+    const deltaMove = { x: e.touches[0].clientX - previousMousePosition.x, y: e.touches[0].clientY - previousMousePosition.y };
+    cube.rotation.y += deltaMove.x * sensitivity;
+    cube.rotation.x += deltaMove.y * sensitivity;
+  }
+  previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+});
+
+const textureFile = document.getElementById('textureFile');
+textureFile.addEventListener('change', (event) => {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const texture = new THREE.TextureLoader().load(event.target.result);
+    material = new THREE.MeshBasicMaterial({ map: texture });
+    cube.material = material;
+  };
+  reader.readAsDataURL(file);
+});
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  renderer.render(scene, camera);
+}
+
+animate();
+
+window.addEventListener('resize', () => {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  renderer.setSize(width, height);
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+});
+</script>
+</body>
+</html>
